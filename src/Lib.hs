@@ -19,8 +19,8 @@ someFunc = do
 
   state <- bottom
   control <- bottom
-  forkIO $ false state control
-  forkIO $ false state control
+  false state control
+  false state control
   not_ state control
 
   print "OK!"
