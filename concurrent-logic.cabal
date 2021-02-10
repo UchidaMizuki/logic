@@ -4,13 +4,13 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b890fc0e724c0e468466f719ed2e433cd320999da38649a9aee1429ca334a637
+-- hash: 2d1df2bd3aced05700503d38b0e92a1b78b892f06d46b6b319060d08426c2019
 
-name:           logic
+name:           concurrent-logic
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/logic#readme>
-homepage:       https://github.com/githubuser/logic#readme
-bug-reports:    https://github.com/githubuser/logic/issues
+description:    Please see the README on GitHub at <https://github.com/githubuser/concurrent-logic#readme>
+homepage:       https://github.com/githubuser/concurrent-logic#readme
+bug-reports:    https://github.com/githubuser/concurrent-logic/issues
 author:         Author name here
 maintainer:     example@example.com
 copyright:      2021 Author name here
@@ -23,13 +23,13 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/logic
+  location: https://github.com/githubuser/concurrent-logic
 
 library
   exposed-modules:
       Lib
   other-modules:
-      Paths_logic
+      Paths_concurrent_logic
   hs-source-dirs:
       src
   build-depends:
@@ -37,29 +37,29 @@ library
     , data-fix
   default-language: Haskell2010
 
-executable logic-exe
+executable concurrent-logic-exe
   main-is: Main.hs
   other-modules:
-      Paths_logic
+      Paths_concurrent_logic
   hs-source-dirs:
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , concurrent-logic
     , data-fix
-    , logic
   default-language: Haskell2010
 
-test-suite logic-test
+test-suite concurrent-logic-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_logic
+      Paths_concurrent_logic
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , concurrent-logic
     , data-fix
-    , logic
   default-language: Haskell2010

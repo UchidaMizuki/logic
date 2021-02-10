@@ -35,7 +35,7 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - logic
+    - concurrent-logic
 
 tests:
   logic-test:
@@ -46,4 +46,4 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - logic
+    - concurrent-logic

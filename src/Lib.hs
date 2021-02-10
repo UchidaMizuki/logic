@@ -9,38 +9,49 @@ import Control.Applicative (Applicative (liftA2))
 import Control.Concurrent (forkIO)
 import Control.Concurrent.MVar (MVar, newEmptyMVar, putMVar, takeMVar)
 import Data.Fix (Fix (..))
+-- import Prelude hiding (not)
 
 someFunc :: IO ()
 someFunc = do
-  -- state <- bottom
-  -- control <- bottom
-  -- false state control
-  -- not_ state control -- not False == True
-
-  state <- bottom
-  control <- bottom
-  false state control
-  false state control
-  not_ state control
+  clFalse >>= clNot >>= clObserve
 
   print "OK!"
 
-bottom :: IO (Fix MVar)
-bottom = Fix <$> newEmptyMVar
+data ConcurrentLogic = ConcurrentLogic
+  { cl0 :: Fix MVar,
+    cl1 :: Fix MVar,
+    cl2 :: Fix MVar
+  }
 
-true :: Fix MVar -> Fix MVar -> IO ()
-true = putMVar . unFix
+clObserve :: ConcurrentLogic -> IO ()
+clObserve (ConcurrentLogic cl0 _ _) = takeMVar (unFix cl0) >>= putMVar (unFix cl0)
 
-false :: Fix MVar -> Fix MVar -> IO ()
-false = const ((bottom >>=) . true)
--- false _ x = bottom >>= true x 
+clBottom :: IO (Fix MVar)
+clBottom = Fix <$> newEmptyMVar
 
-observe :: Fix MVar -> IO ()
-observe = liftA2 (>>=) takeMVar putMVar . unFix
--- observe (unFix -> x) = takeMVar x >>= putMVar x
+clTrue :: IO ConcurrentLogic
+clTrue = do
+  cl0 <- clBottom
+  cl1 <- clBottom
+  cl2 <- clBottom
+  putMVar (unFix cl1) cl0
+  return $ ConcurrentLogic cl0 cl1 cl2
 
-not_ :: Fix MVar -> Fix MVar -> IO ()
-not_ x y = do 
-  forkIO $ observe x
-  observe y
-  true x y
+clFalse :: IO ConcurrentLogic
+clFalse = do
+  cl1 <- clBottom
+  cl2 <- clBottom
+  cl3 <- clBottom
+  putMVar (unFix cl1) cl3
+  return $ ConcurrentLogic cl1 cl2 cl3
+
+clNot :: ConcurrentLogic -> IO ConcurrentLogic
+clNot cl@(ConcurrentLogic cl1 cl2 cl3) = do
+  forkIO $ clObserve cl
+  
+  cl0 <- clBottom
+  let cl = ConcurrentLogic cl0 cl1 cl2
+  forkIO $ clObserve cl
+
+  takeMVar (unFix cl2) >>= putMVar (unFix cl3)
+  return cl
